@@ -374,20 +374,20 @@ sm
         (let [ diff (- (magnitude a) (magnitude b))]
                 ( if (zero? diff)
                         (compare a b)
-                        diff)))
+              diff)))
 
 
 
 
 ; "Принимает коллекцию координат точек (в виде кортежей [х у]) и возвращает Функцию, обеспечивающую линейную интерполяцию между этими точками."
-(defn interpolate
-        [points]
-                (let [results (into (sorted-map) (map vec points))] 
-                        (fn [x]
- (let [[xa ya] ( fir s t (rsubseq results <= x)) 
-[xb yb] ( fir s t (subseq results > x))]
-( i f (and xa xb) 
-(/ (+ (* ya (- xb x)) (* yb (- x xa))) 
-(- xb xa))
-(or ya yb))))))
 
+(defn interpolate
+  [points]
+  (let [results (into (sorted-map) (map vec points))]
+    (fn [x]
+      (let [[xa ya] (first (rsubseq results <= x))
+            [xb yb] (first (subseq results > x))]
+        (if (and xa xb)
+           (/ (+ (* ya (- xb x)) (* yb (- x xa)))
+              (- xb xa))
+           (or ya yb))))))
