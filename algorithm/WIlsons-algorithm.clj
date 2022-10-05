@@ -48,7 +48,7 @@
 (draw 40 40 (maze (grid 40 40)))
 
 ; "Оригинальный алгоритм Уилсона"
-(defn wmaze
+(defn maze
   [walls]
   (let [paths (reduce (fn [index [a b]]
                         (merge-with into index {a [b] b [a]}))
@@ -114,3 +114,27 @@
     (.setVisible true)))
 
 (hex-draw 40 40 (maze (hex-grid 40 40)))
+
+(def labyrinth (maze (hex-grid 40 40)))
+(def labyrinth (let [g (hex-grid 10 10)] (reduce disj g (maze g))))
+
+(defmulti fill
+  "Заполняет узел xml/html (согласно модели clojure.xml) 
+указанным значением."
+  (fn [node value] (:tag node)))
+
+(defmethod fill :div
+  [node value]
+  (assoc node :content [(str value)]))
+
+(defmethod fill :input
+  [node value]
+  (assoc-in node [:attrs :value] (str value)))
+
+(fill {:tag :div} "hello")
+(fill {:tag :input} "hello")
+(fill {:span :input} "hello")
+
+(defmethod fill :default
+  [node value]
+  (assoc node :content [(str value)]))
